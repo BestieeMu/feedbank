@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
-  const router = useRouter();
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
@@ -25,7 +24,7 @@ export const signInWithGoogle = async () => {
         createdAt: new Date(),
       });
     }
-    router.push("/dashboard");
+
     return user;
   } catch (error) {
     console.error("Error signing in:", error);

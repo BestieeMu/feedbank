@@ -73,15 +73,16 @@ export default function Dashboard() {
 
   return (
     <>
-      <header className="py-7 w-full bg-white flex flex-col md:flex-row justify-between items-center">
-        <div className="flex flex-col md:flex-row gap-4">
+      <header className="py-7 w-full bg-white ">
+        <div className="flex justify-between max-w-5xl mx-auto">
           <DropdownMenu>
             <DropdownMenuTrigger>
+            {user && (
               <div
                 onClick={() => setDropDown(!dropDown)}
                 className="relative justify-center items-center bg-gray-200 py-3 flex gap-4 rounded-md px-3"
               >
-                {user && (
+                
                   <div className="flex items-center space-x-2">
                     <img
                       src={user.photoURL}
@@ -92,9 +93,10 @@ export default function Dashboard() {
                       {user.displayName.split(" ")[0]}
                     </span>
                   </div>
-                )}
+               
                 <ChevronDown />
               </div>
+               )}
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
@@ -113,47 +115,49 @@ export default function Dashboard() {
           </div>
         </div>
       </header>
-      <div className="min-h-screen bg-gray-100 p-6 flex flex-col md:flex-row gap-10">
-        <div className="bg-white w-full md:w-5/12 p-6 rounded-xl shadow-md max-w-md">
-          <h2 className="font-bold text-lg">
-            Build features users{" "}
-            <span className="bg-black text-white px-2 py-1 rounded">
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="flex max-w-5xl mx-auto gap-10">
+          <div className="bg-white w-5/12 p-6 rounded-xl shadow-md max-w-md">
+            <h2 className="font-bold text-lg">
+              Build features users{" "}
+              <span className="bg-black text-white px-2 py-1 rounded">
                 really
-            </span>{" "}
-            want
-          </h2>
-          <input
-            type="text"
-            placeholder="Board Name"
-            value={boardName}
-            onChange={(e) => setBoardName(e.target.value)}
-            className="w-full p-2 mt-3 border rounded-lg"
-          />
-          <Button
-            onClick={createBoard}
-            className="w-full text-white py-2 mt-3 rounded-lg font-semibold"
-            disabled={isCreatingBoard} // Disable button while creating a board
-          >
-            {isCreatingBoard ? "Creating..." : "Create Board"}
-          </Button>
-        </div>
+              </span>{" "}
+              want
+            </h2>
+            <input
+              type="text"
+              placeholder="Board Name"
+              value={boardName}
+              onChange={(e) => setBoardName(e.target.value)}
+              className="w-full p-2 mt-3 border rounded-lg"
+            />
+            <Button
+              onClick={createBoard}
+              className="w-full text-white py-2 mt-3 rounded-lg font-semibold"
+              disabled={isCreatingBoard} // Disable button while creating a board
+            >
+              {isCreatingBoard ? "Creating..." : "Create Board"}
+            </Button>
+          </div>
 
-        <div className="w-full">
-          <h2 className="font-bold text-2xl ">{boards.length} Boards</h2>
-          <div className="grid w-full grid-cols-2 md:grid-cols-3 gap-4 mt-3">
-            {isLoadingBoards ? (
-              <div>Loading...</div> // Display loading indicator for boards
-            ) : (
-              boards.map((board: any) => (
-                <Link
-                  href={`/dashboard/${board.id}`}
-                  key={board.id}
-                  className="bg-white w-full px-10 py-7 hover:bg-black cursor-pointer hover:text-white rounded-xl shadow-md font-semibold"
-                >
-                  <p className="font-semibold text-lg">{board.name}</p>
-                </Link>
-              ))
-            )}
+          <div className="w-full">
+            <h2 className="font-bold text-2xl ">{boards.length} Boards</h2>
+            <div className="grid w-full grid-cols-2 gap-4 mt-3">
+              {isLoadingBoards ? (
+                <div>Loading...</div> // Display loading indicator for boards
+              ) : (
+                boards.map((board: any) => (
+                  <Link
+                    href={`/dashboard/${board.id}`}
+                    key={board.id}
+                    className="bg-white w-full px-10 py-7 hover:bg-black cursor-pointer hover:text-white rounded-xl shadow-md font-semibold"
+                  >
+                    <p className="font-semibold text-lg">{board.name}</p>
+                  </Link>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
