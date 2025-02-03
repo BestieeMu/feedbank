@@ -1,8 +1,24 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/firebase";
 import { signInWithGoogle } from "@/service/aujth.service";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter()
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser: any) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   return (
     <>
       <div className="flex h-screen justify-center items-center dark:bg-slate-800">
@@ -36,12 +52,21 @@ export default function Home() {
             </p>
             <div className="mt-5 sm:mt-8 sm:flex sm:justify-center">
               <div className="rounded-md shadow">
-                <Button
-                  onClick={signInWithGoogle}
-                  className="flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white md:py-6 md:px-10 md:text-lg"
-                >
-                  Collect Feedback For Free 🚀
-                </Button>
+                {user ? (
+                  <Button
+                    onClick={()=> router.push("/dashboard")}
+                    className="flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white md:py-6 md:px-10 md:text-lg"
+                  >
+                    Visit Dashboard🚀
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={signInWithGoogle}
+                    className="flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white md:py-6 md:px-10 md:text-lg"
+                  >
+                    Collect Feedback For Free 🚀
+                  </Button>
+                )}
               </div>
             </div>
           </div>

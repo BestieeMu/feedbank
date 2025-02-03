@@ -201,7 +201,7 @@ const ProjectDetails = ({
     <>
       <header className="py-7 w-full bg-white ">
         <div className="flex justify-between max-w-5xl mx-auto">
-          <h3 className="text-2zl font-bold">⬆️ {project?.title}</h3>
+          <h3 className="text-2xl font-bold">⬆️ {project?.title}</h3>
           <div></div>
         </div>
       </header>
@@ -210,7 +210,7 @@ const ProjectDetails = ({
           {project ? (
             <>
               {/* Feedback Form */}
-              <div className="bg-white w-5/12 p-6 rounded-lg shadow-lg mt-6">
+              <div className="bg-white w-full md:w-5/12 p-6 rounded-lg shadow-lg mt-6">
                 <h2 className="text-xl font-bold mb-4">Post a Feedback</h2>
                 <form onSubmit={handleSubmit}>
                   <input

@@ -84,12 +84,12 @@ const Page = () => {
           </button>
         </div>
       </header>
-      <div className="max-w-5xl mx-auto p-6 flex items-start gap-10 rounded-lg">
+      <div className="max-w-5xl mx-auto p-6 flex flex-col gap-10 rounded-lg">
         {isLoadingFeedbacks ? (
           <p>Loading feedback...</p>
         ) : (
           <>
-            <div className="w-7/12">
+            <div className="flex flex-col gap-10">
               <div className="flex gap-10 items-start">
                 <button className="px-3 py-1 rounded-lg bg-gray-200" disabled>
                   ▲ {feedback?.votes || 0}
@@ -99,24 +99,24 @@ const Page = () => {
                   <p className="text-gray-500">{feedback?.description}</p>
                 </div>
               </div>
-            </div>
-            <div className="w-full">
-              <textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write a comment"
-                className="w-full h-24 p-3 resize-none rounded-sm border"
-              />
-              <button onClick={handleAddComment} className="bg-black text-white px-4 py-2 rounded-md">
-                {addingComment ? "Adding..." : "Add Comment"}
-              </button>
-              <div className="w-full space-y-2 ">
-                {comments.length === 0 ? <div className="bg-white rounded-md px-4 mt-5 py-6">No comments yet.</div> : comments.map((comment: any) => (
-                  <div key={comment.id} className="border-b bg-white rounded-md px-4 mt-5 py- py-2">
-                    <p>{comment.text}</p>
-                    <p className="text-gray-400 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
-                  </div>
-                ))}
+              <div className="w-full">
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Write a comment"
+                  className="w-full h-24 p-3 resize-none rounded-sm border"
+                />
+                <button onClick={handleAddComment} className="bg-black text-white px-4 py-2 rounded-md mt-4">
+                  {addingComment ? "Adding..." : "Add Comment"}
+                </button>
+                <div className="w-full space-y-2 mt-4">
+                  {comments.length === 0 ? <div className="bg-white rounded-md px-4 py-6">No comments yet.</div> : comments.map((comment: any) => (
+                    <div key={comment.id} className="border-b bg-white rounded-md px-4 py-6">
+                      <p>{comment.text}</p>
+                      <p className="text-gray-400 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </>
