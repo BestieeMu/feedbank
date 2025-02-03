@@ -39,14 +39,15 @@ const ProjectFeedbackPage = ({
   const [project, setProject] = useState<Project | null>(null);
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
-  const publicLink = `http://localhost:3000/d/${project?.title}`;
+
   const [isDeletingFeedback, setIsDeletingFeedback] = useState("");
   const [isDeletingProject, setIsDeletingProject] = useState(false);
+  const [domainName, setDomainName] = useState("")
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    console.log(hostname)
+    setDomainName(hostname)
  }
-
+ const publicLink = `https://${domainName}/d/${project?.title}`;
   useEffect(() => {
     const fetchProject = async () => {
       const projectId = (await params).projectId;
