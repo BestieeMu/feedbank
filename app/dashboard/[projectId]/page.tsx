@@ -43,10 +43,14 @@ const ProjectFeedbackPage = ({
   const [isDeletingFeedback, setIsDeletingFeedback] = useState("");
   const [isDeletingProject, setIsDeletingProject] = useState(false);
   const [domainName, setDomainName] = useState("")
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    setDomainName(hostname)
- }
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    setDomainName(window.location.hostname);
+  }
+}, []);
+
+
  const publicLink = `https://${domainName}/d/${project?.title}`;
   useEffect(() => {
     const fetchProject = async () => {
