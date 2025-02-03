@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-const isProduction = process.env.VERCEL_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 
 // ✅ Replace with your actual Firebase config
 const firebaseConfig = {
