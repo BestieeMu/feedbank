@@ -195,7 +195,7 @@ const Dashboard = () => {
           </DropdownMenu>
 
           <div>
-          <Link href={"/d/FeedBack"}>💡Feedback</Link>
+          <Link href={"/d/FeedBank"}>💡Feedback</Link>
           </div>
         </div>
       </header>

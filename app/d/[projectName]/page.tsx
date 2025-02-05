@@ -248,7 +248,7 @@ const ProjectDetails = ({
       <header className="py-7 w-full bg-white ">
         <div className="flex px-6 md:p-4 justify-between max-w-5xl mx-auto">
           <h3 className="text-2xl font-bold">⬆️ {project?.title}</h3>
-          <div></div>
+          <div><Link href={"/d/FeedBank"}>💡Feedback</Link></div>
         </div>
       </header>
       <div className="bg-gray-100 min-h-screen p-6">

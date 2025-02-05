@@ -35,7 +35,7 @@ export default function Home() {
             height={500}
             className=" w-32 h-full"
           />
-          <div><Link href={"/d/FeedBack"}>💡Feedback</Link></div>
+          <div><Link href={"/d/FeedBank"}>💡Feedback</Link></div>
         </div>
       </header>
       {/* the main page */}

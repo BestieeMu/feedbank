@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [isLoadingBoards, setIsLoadingBoards] = useState(false); // State for loading boards
   const [isCreatingBoard, setIsCreatingBoard] = useState(false); // State for creating a board
   const [dropDown, setDropDown] = useState(false);
+  const [editingBoard, setEditingBoard] = useState(null); // State for editing a board
   const router = useRouter();
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser: any) => {
@@ -54,10 +56,26 @@ const Dashboard = () => {
     setIsLoadingBoards(false); // Set loading to false after fetching boards
   };
 
+  const checkBoardExistence = async (boardName: string) => {
+    const q = query(
+      collection(db, "projects"),
+      where("name", "==", boardName),
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.length > 0;
+  };
+
   const createBoard = async () => {
     setIsCreatingBoard(true); // Set creating to true when creating a board
     if (!boardName.trim() || !user) {
       setIsCreatingBoard(false); // Set creating to false if board name is empty or user is not logged in
+      return;
+    }
+
+    const boardExists = await checkBoardExistence(boardName);
+    if (boardExists) {
+      toast.success('A board with this name already exists.')
+      setIsCreatingBoard(false); // Set creating to false if board already exists
       return;
     }
 
@@ -70,6 +88,25 @@ const Dashboard = () => {
     setBoardName("");
     fetchBoards(user);
     setIsCreatingBoard(false); // Set creating to false after creating a board
+  };
+
+  const editBoard = async (boardId: string, newName: string) => {
+    if (!newName.trim() || !user) {
+      return;
+    }
+
+    const boardExists = await checkBoardExistence(newName);
+    if (boardExists) {
+      toast.success('A board with this name already exists.')
+      return;
+    }
+
+    const boardRef = doc(db, "projects", boardId);
+    await updateDoc(boardRef, { name: newName });
+
+    setBoardName("");
+    fetchBoards(user);
+    setEditingBoard(null); // Set editing to false after editing a board
   };
 
   return (
@@ -106,12 +143,12 @@ const Dashboard = () => {
           </DropdownMenu>
 
           <div>
-            <Link href={"/d/FeedBack"}>💡Feedback</Link>
+            <Link href={"/d/FeedBank"}>💡Feedback</Link>
           </div>
         </div>
       </header>
       <div className="min-h-screen bg-gray-100 p-6">
-        <div className="flex flex-col md:flex-row max-w-5xl mx-auto gap-10">
+        <div className="flex flex-col md:items-start md:flex-row max-w-5xl mx-auto gap-10">
           <div className="bg-white md:w-5/12 w-full p-6 rounded-xl shadow-md max-w-md">
             <h2 className="font-bold text-lg">
               Build features users{" "}
@@ -143,13 +180,24 @@ const Dashboard = () => {
                 <div>Loading...</div> // Display loading indicator for boards
               ) : (
                 boards.map((board: any) => (
-                  <Link
-                    href={`/dashboard/${board.id}`}
-                    key={board.id}
-                    className="bg-white w-full px-10 py-7 hover:bg-black cursor-pointer hover:text-white rounded-xl shadow-md font-semibold"
-                  >
+                  <div key={board.id} className="bg-white w-full px-10 py-7 hover:bg-black group cursor-pointer hover:text-white rounded-xl shadow-md font-semibold">
                     <p className="font-semibold text-lg">{board.name}</p>
-                  </Link>
+                    {editingBoard === board.id && (
+                      <input
+                        type="text"
+                        value={boardName}
+                        onChange={(e) => setBoardName(e.target.value)}
+                        className="w-full p-2 mt-1 border text-black rounded-lg"
+                      />
+                    )}
+                    <Button
+                      onClick={() => editingBoard === board.id ? editBoard(board.id, boardName) : setEditingBoard(board.id)}
+                      className="mt-2 group-hover:bg-white text-white group-hover:text-black py-2 rounded-lg font-semibold"
+                      disabled={isCreatingBoard} // Disable button while creating a board
+                    >
+                      {editingBoard === board.id ? "Save" : "Edit"}
+                    </Button>
+                  </div>
                 ))
               )}
             </div>

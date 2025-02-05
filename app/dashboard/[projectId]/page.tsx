@@ -157,7 +157,7 @@ const ProjectFeedbackPage = ({
           >
             ⬅️ Back
           </button>
-          <div><Link href={"/d/FeedBack"}>💡Feedback</Link></div>
+          <div><Link href={"/d/FeedBank"}>💡Feedback</Link></div>
         </div>
       </header>
 
