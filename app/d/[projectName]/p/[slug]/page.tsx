@@ -1,4 +1,5 @@
 "use client";
+import withAuth from "@/lib/authGuard";
 import { db } from "@/lib/firebase";
 import {
   query,
@@ -77,13 +78,13 @@ const Page = () => {
   return (
     <>
       <header className="py-7 w-full bg-white">
-        <div className="flex justify-between max-w-5xl mx-auto">
+        <div className="flex px-6 md:p-4 justify-between max-w-5xl mx-auto">
           <button onClick={() => router.back()} className="flex items-center text-gray-700 font-semibold bg-gray-200 px-4 py-2 rounded-lg">
             ⬅️ Back
           </button>
         </div>
       </header>
-      <div className="max-w-5xl mx-auto p-6 flex items-start gap-10 rounded-lg">
+      <div className="max-w-5xl mx-auto p-6 flex flex-col md:flex-row items-start gap-10 rounded-lg">
         {isLoadingFeedbacks ? (
           <p>Loading feedback...</p>
         ) : (
@@ -125,4 +126,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default withAuth(Page);

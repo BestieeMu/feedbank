@@ -11,3 +11,13 @@ body {
     --radius: 0.5rem;
   }
 }
+
+@layer base {
+  :root {
+    --chart-1: 0 0% 90%;
+    --chart-2: 0 0% 80%;
+    --chart-3: 0 0% 70%;
+    --chart-4: 0 0% 60%;
+    --chart-5: 0 0% 50%;
+  }
+}

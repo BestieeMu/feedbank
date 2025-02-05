@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Clipboard, ExternalLink, Trash } from "lucide-react";
+import withAuth from "@/lib/authGuard";
+import { Button } from "@/components/ui/button";
 
 export interface Feedback {
   id: string;
@@ -42,16 +44,15 @@ const ProjectFeedbackPage = ({
 
   const [isDeletingFeedback, setIsDeletingFeedback] = useState("");
   const [isDeletingProject, setIsDeletingProject] = useState(false);
-  const [domainName, setDomainName] = useState("")
+  const [domainName, setDomainName] = useState("");
 
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    setDomainName(window.location.hostname);
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setDomainName(window.location.hostname);
+    }
+  }, []);
 
-
- const publicLink = `https://${domainName}/d/${project?.title}`;
+  const publicLink = `https://${domainName}/d/${project?.title}`;
   useEffect(() => {
     const fetchProject = async () => {
       const projectId = (await params).projectId;
@@ -147,8 +148,8 @@ useEffect(() => {
   return (
     <>
       {/* Back Button */}
-      <header className="py-7 w-full bg-white ">
-        <div className="flex justify-between max-w-5xl mx-auto">
+      <header className=" w-full bg-white ">
+        <div className="flex px-6 md:p-4 justify-between max-w-5xl mx-auto">
           <button
             onClick={() => router.back()}
             className="flex items-center text-gray-700 font-semibold bg-gray-200 px-4 py-2 rounded-lg"
@@ -159,8 +160,8 @@ useEffect(() => {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto p-6 flex items-start gap-10 rounded-lg ">
-        <div className="w-5/12">
+      <div className="max-w-5xl mx-auto p-6 flex flex-col md:flex-row items-start gap-10 rounded-lg ">
+        <div className="md:w-5/12 w-full p-6">
           <h2 className="text-xl font-bold">
             {project.title} — {feedbacks.length} Posts
           </h2>
@@ -195,72 +196,98 @@ useEffect(() => {
             onClick={handleDeleteProject}
             className="mt-4 flex items-center text-red-500 hover:text-red-700"
           >
-            <Trash size={18} />
-            <span className="ml-1">Delete</span>
+            {isDeletingProject ? (
+              "Loading"
+            ) : (
+              <>
+                <Trash size={18} />
+                <span className="ml-1">Delete</span>
+              </>
+            )}
           </button>
+          <div className="w-full bg-black text-center p-6 mt-10 rounded-md">
+            <p className="text-white font-bold ">Upgrade to premium to use visual feedback</p>
+            <Button className="mt-4 p-2 bg-white font-semibold uppercase hover:bg-white text-black rounded-lg" >
+             upgrade now ⚡
+            </Button>
+          </div>
         </div>
 
         <div className="w-full flex flex-col">
-          {feedbacks.map((item: any) => (
-            <div
-              key={item.id}
-              className="mt-6 p-4 bg-gray-50 rounded-lg w-full flex items-start shadow-sm"
-            >
-              <div className="w-full px-5">
-                <h3 className="font-semibold text-balance ">{item.title}</h3>
-                <p className="text-sm text-gray-600 text-balance">
-                  {item.description}
-                </p>
-                <div className="flex items-center mt-4 text-gray-500 text-sm">
-                  <span>▲ {item.votes}</span>
-                  <span className="ml-4">💬 0</span>
+          {isLoadingFeedbacks ? (
+            <div className="text-center">
+              <p>Loading feedbacks...</p>
+            </div>
+          ) : feedbacks.length === 0 ? (
+            <div className="text-center">
+              <p>No feedbacks yet.</p>
+            </div>
+          ) : (
+            feedbacks.map((item: any) => (
+              <div
+                key={item.id}
+                className="mt-6 p-4 bg-gray-50 rounded-lg w-full flex items-start shadow-sm"
+              >
+                <div className="w-full px-5">
+                  <h3 className="font-semibold text-balance ">{item.title}</h3>
+                  <p className="text-sm text-gray-600 text-balance">
+                    {item.description}
+                  </p>
+                  <div className="flex items-center mt-4 text-gray-500 text-sm">
+                    <span>▲ {item.votes}</span>
+                    <span className="ml-4">💬 0</span>
+                  </div>
+                </div>
+                <div className="w-5/12 space-y-4">
+                  {/* <Select
+                    onValueChange={(value) =>
+                      handleUpdateFeedbackStatus(
+                        item.id,
+                        value as Feedback["status"]
+                      )
+                    }
+                    value={item.status}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="⭐ New" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="New">⭐ New</SelectItem>
+                      <SelectItem value="Work In Progress">
+                        ⏳ Work In Progress
+                      </SelectItem>
+                      <SelectItem value="Shipped">✅ Shipped</SelectItem>
+                      <SelectItem value="Cancled">❌ Cancled</SelectItem>
+                    </SelectContent>
+                  </Select> */}
+
+                  <button
+                    onClick={() => router.push(`/d/${project.title}/p/${item.slug}`)}
+                    className=" w-full bg-gray-100 py-2 text-blue-500 hover:underline"
+                  >
+                    View →
+                  </button>
+                  <button
+                    onClick={() => handleDeleteFeedback(item.id)}
+                    className=" flex w-full justify-center py-2 bg-red-100 items-center text-red-500 hover:text-red-700"
+                  >
+                    {isDeletingFeedback ? (
+                      "Loading"
+                    ) : (
+                      <>
+                        <Trash size={18} />
+                        <span className="ml-1">Delete</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
-              <div className="w-5/12 space-y-4">
-                <Select
-                  onValueChange={(value) =>
-                    handleUpdateFeedbackStatus(
-                      item.id,
-                      value as Feedback["status"]
-                    )
-                  }
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="⭐ New" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="New">⭐ New</SelectItem>
-                    <SelectItem value="Work In Progress">
-                      ⏳ Work In Progress
-                    </SelectItem>
-                    <SelectItem value="Shipped">✅ Shipped</SelectItem>
-                    <SelectItem value="Cancled">❌ Cancled</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <button onClick={() => router.push(`/p/${item.slug}`)} className=" w-full bg-gray-100 py-2 text-blue-500 hover:underline">
-                  View →
-                </button>
-                <button
-                  onClick={() => handleDeleteFeedback(item.id)}
-                  className=" flex w-full justify-center py-2 bg-red-100 items-center text-red-500 hover:text-red-700"
-                >
-                  {isDeletingFeedback ? (
-                    "Loading"
-                  ) : (
-                    <>
-                      <Trash size={18} />
-                      <span className="ml-1">Delete</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </>
   );
 };
 
-export default ProjectFeedbackPage;
+export default withAuth(ProjectFeedbackPage);

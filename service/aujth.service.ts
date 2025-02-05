@@ -1,11 +1,11 @@
 import { auth, db } from "@/lib/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { doc, getDoc, setDoc, collection } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 const provider = new GoogleAuthProvider();
 
-export const signInWithGoogle = async () => {
+export const signInWithGoogle = async (router: ReturnType<typeof useRouter>) => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
@@ -25,15 +25,19 @@ export const signInWithGoogle = async () => {
       });
     }
 
+    // Route the user to the dashboard after successful login
+    router.push('/dashboard');
+
     return user;
   } catch (error) {
     console.error("Error signing in:", error);
   }
 };
 
-export const logout = async () => {
+export const logout = async (router: ReturnType<typeof useRouter>) => {
   try {
     await signOut(auth);
+    router.push('/');
   } catch (error) {
     console.error("Error logging out:", error);
   }
