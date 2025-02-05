@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/firebase";
 import { signInWithGoogle } from "@/service/aujth.service";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -34,7 +35,7 @@ export default function Home() {
             height={500}
             className=" w-32 h-full"
           />
-          <div></div>
+          <div><Link href={"/d/FeedBack"}>💡Feedback</Link></div>
         </div>
       </header>
       {/* the main page */}

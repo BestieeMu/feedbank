@@ -20,6 +20,7 @@ import {
 import { Clipboard, ExternalLink, Trash } from "lucide-react";
 import withAuth from "@/lib/authGuard";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export interface Feedback {
   id: string;
@@ -156,7 +157,7 @@ const ProjectFeedbackPage = ({
           >
             ⬅️ Back
           </button>
-          <div></div>
+          <div><Link href={"/d/FeedBack"}>💡Feedback</Link></div>
         </div>
       </header>
 

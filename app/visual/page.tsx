@@ -42,6 +42,7 @@ import { logout, signInWithGoogle } from "@/service/aujth.service";
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import withAuth from "@/lib/authGuard";
+import Link from "next/link";
 
 interface Project {
   id: string;
@@ -194,7 +195,7 @@ const Dashboard = () => {
           </DropdownMenu>
 
           <div>
-           
+          <Link href={"/d/FeedBack"}>💡Feedback</Link>
           </div>
         </div>
       </header>
