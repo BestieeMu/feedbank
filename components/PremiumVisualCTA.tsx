@@ -28,12 +28,12 @@ const PremiumVisualCTA = () => {
     }
   };
   return (
-    <div className="w-full flex text-center  p-10 mt-16 rounded-lg shadow-lg relative">
+    <div className="w-full flex flex-col md:flex-row text-center p-10 md:mt-16 rounded-lg shadow-lg">
       <div className="w-full flex flex-col justify-center items-center z-10">
         <h2 className="text-black text-[2rem] font-bold md:text-[4rem]">
           Unlock the Power of Visual Feedback
         </h2>
-        <p className="text-gray-500 text-2xl text-balance mt-2 max-w-xl mx-auto">
+        <p className="text-gray-500 text-[1.5rem] text-balance mt-2 max-w-xl mx-auto">
           Upgrade to premium and visualize your project's feedback like never
           before! Manage feedback with a Kanban board, gain insights, and take
           full control.
@@ -46,13 +46,14 @@ const PremiumVisualCTA = () => {
           Try Visual View
         </Button>
       </div>
-      <div className="w-9/12 rounded-lg overflow-hidden">
+      <div className="md:w-9/12 mt-10 w-full md:mt-0 rounded-lg overflow-hidden">
         <Image
           src="/MacBook_Pro_mockuo.png" // Replace with your image URL
           alt="Visual CTO Image Big"
+          layout="responsive"
           width={1200}
           height={500}
-          className=" w-full"
+          className="w-full"
         />
       </div>
     </div>

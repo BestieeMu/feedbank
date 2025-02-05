@@ -28,16 +28,16 @@ const HowItWork = () => {
   };
 
   return (
-    <section className="py-20 w-full overflow-hidden ">
+    <section className="py-5 w-full overflow-hidden ">
       <div className=" px-4  sm:px-6  lg:px-8 mx-auto">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-wrap items-center -mx-5">
+          <div className="flex flex-col md:flex-row items-center -mx-5">
             <div className="w-full lg:w-1/2 px-5 mb-20 lg:mb-0">
               <div className="max-w-md">
                 <span className="text-lg font-bold text-gray-500">
                   Start Collecting Feedback
                 </span>
-                <h2 className="mt-12 mb-10 text-5xl font-extrabold leading-tight text-gray-800 dark:text-gray-200">
+                <h2 className="mt-12 mb-10 text-[2rem] font-extrabold leading-tight text-gray-800 ">
                   Launch Your Project in Minutes
                 </h2>
                 <p className="mb-16 text-lg text-gray-600 dark:text-gray-400">
