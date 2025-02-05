@@ -21,6 +21,7 @@ import { Clipboard, ExternalLink, Trash } from "lucide-react";
 import withAuth from "@/lib/authGuard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export interface Feedback {
   id: string;
@@ -119,29 +120,6 @@ const ProjectFeedbackPage = ({
     }
   };
 
-  const handleUpdateFeedbackStatus = async (
-    feedbackId: string,
-    newStatus: Feedback["status"]
-  ) => {
-    try {
-      const feedbackRef = doc(
-        db,
-        "projects",
-        project?.id!,
-        "feedbacks",
-        feedbackId
-      );
-      await updateDoc(feedbackRef, { status: newStatus });
-      setFeedbacks(
-        feedbacks.map((fb) =>
-          fb.id === feedbackId ? { ...fb, status: newStatus } : fb
-        )
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   if (!project) {
     return <div>Loading...</div>;
   }
@@ -178,7 +156,10 @@ const ProjectFeedbackPage = ({
               />
               <button
                 className="ml-2 p-1"
-                onClick={() => navigator.clipboard.writeText(publicLink)}
+                onClick={() => {
+                  navigator.clipboard.writeText(publicLink)
+                  toast.success('Link Copied.')
+                }}
               >
                 <Clipboard size={18} />
               </button>

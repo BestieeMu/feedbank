@@ -4,7 +4,7 @@ import KanbanColumn from "./KanbanColumn";
 
 const statuses: string[] = ["New", "Work In Progress", "Shipped", "Canceled"];
 
-const KanbanBoard: React.FC<{ feedbacks: any; onUpdateStatus: (id: string, status: string) => void }> = ({ feedbacks, onUpdateStatus }) => {
+const KanbanBoard: React.FC<{ feedbacks: any; onUpdateStatus: (id: string, status: string) => void; projectId: string }> = ({ feedbacks, onUpdateStatus, projectId }) => {
   const onDragEnd = (event: any) => {
     const { active, over } = event;
     if (!over) return;
@@ -28,6 +28,7 @@ const KanbanBoard: React.FC<{ feedbacks: any; onUpdateStatus: (id: string, statu
             <KanbanColumn
               title={status}
               status={status}
+              projectId={projectId}
               feedbacks={feedbacks.filter((item: any) => item.status.toLowerCase() === status.toLowerCase())}
             />
           </SortableContext>

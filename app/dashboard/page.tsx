@@ -1,8 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
-import { collection, addDoc, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 import { logout, signInWithGoogle } from "@/service/aujth.service";
 import { Button } from "@/components/ui/button";
 import withAuth from "@/lib/authGuard";
@@ -57,10 +65,7 @@ const Dashboard = () => {
   };
 
   const checkBoardExistence = async (boardName: string) => {
-    const q = query(
-      collection(db, "projects"),
-      where("name", "==", boardName),
-    );
+    const q = query(collection(db, "projects"), where("name", "==", boardName));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.length > 0;
   };
@@ -74,7 +79,7 @@ const Dashboard = () => {
 
     const boardExists = await checkBoardExistence(boardName);
     if (boardExists) {
-      toast.success('A board with this name already exists.')
+      toast.success("A board with this name already exists.");
       setIsCreatingBoard(false); // Set creating to false if board already exists
       return;
     }
@@ -87,6 +92,7 @@ const Dashboard = () => {
 
     setBoardName("");
     fetchBoards(user);
+    toast.success("project created");
     setIsCreatingBoard(false); // Set creating to false after creating a board
   };
 
@@ -97,7 +103,7 @@ const Dashboard = () => {
 
     const boardExists = await checkBoardExistence(newName);
     if (boardExists) {
-      toast.success('A board with this name already exists.')
+      toast.success("A board with this name already exists.");
       return;
     }
 
@@ -175,28 +181,60 @@ const Dashboard = () => {
 
           <div className="w-full">
             <h2 className="font-bold text-2xl ">{boards.length} Boards</h2>
-            <div className="grid w-full grid-cols-2 gap-4 mt-3">
+            <div className="grid w-full grid-cols-2 place-items-start gap-4 mt-3">
               {isLoadingBoards ? (
                 <div>Loading...</div> // Display loading indicator for boards
               ) : (
                 boards.map((board: any) => (
-                  <div key={board.id} className="bg-white w-full px-10 py-7 hover:bg-black group cursor-pointer hover:text-white rounded-xl shadow-md font-semibold">
-                    <p className="font-semibold text-lg">{board.name}</p>
+                  <div
+                    key={board.id}
+                    className="bg-white w-full px-10 flex flex-col items-start py-7 hover:bg-black group cursor-pointer hover:text-white rounded-xl shadow-md font-semibold"
+                  >
+                    <div className="flex w-full justify-between items-center">
+                      <p className="font-semibold hover:cursor-pointer text-lg">
+                        {board.name}
+                      </p>
+                      <Link
+                        href={`/dashboard/${board.id}`}
+                        className="font-semibold hover:cursor-pointer text-lg"
+                      >
+                        <ExternalLink />
+                      </Link>
+                    </div>
                     {editingBoard === board.id && (
-                      <input
-                        type="text"
-                        value={boardName}
-                        onChange={(e) => setBoardName(e.target.value)}
-                        className="w-full p-2 mt-1 border text-black rounded-lg"
-                      />
+                      <>
+                        <input
+                          type="text"
+                          value={boardName}
+                          onChange={(e) => setBoardName(e.target.value)}
+                          className="w-full p-2 mt-1 border text-black rounded-lg"
+                        />
+                        <div className="flex justify-between mt-2">
+                          <Button
+                            onClick={() => editBoard(board.id, boardName)}
+                            className="text-white group-hover:bg-white group-hover:text-black py-2 rounded-lg font-semibold"
+                            disabled={isCreatingBoard} // Disable button while creating a board
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            onClick={() => setEditingBoard(null)}
+                            className="text-white group-hover:bg-white ml-2 group-hover:text-black py-2 rounded-lg font-semibold"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </>
                     )}
-                    <Button
-                      onClick={() => editingBoard === board.id ? editBoard(board.id, boardName) : setEditingBoard(board.id)}
-                      className="mt-2 group-hover:bg-white text-white group-hover:text-black py-2 rounded-lg font-semibold"
-                      disabled={isCreatingBoard} // Disable button while creating a board
-                    >
-                      {editingBoard === board.id ? "Save" : "Edit"}
-                    </Button>
+                    {!editingBoard && (
+                      <Button
+                        onClick={() => setEditingBoard(board.id)}
+                        className="mt-2 group-hover:bg-white text-white group-hover:text-black py-2 rounded-lg font-semibold"
+                        disabled={isCreatingBoard} // Disable button while creating a board
+                      >
+                        Edit
+                      </Button>
+                    )}
                   </div>
                 ))
               )}

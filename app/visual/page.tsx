@@ -7,6 +7,8 @@ import {
   onSnapshot,
   getDocs,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import {
   Select,
@@ -78,7 +80,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const querySnapshot = await getDocs(collection(db, "projects"));
+      const querySnapshot = await getDocs(query(collection(db, "projects"), where("userId", "==", user?.uid)));
       const projectList = querySnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as Project)
       );
@@ -88,8 +90,10 @@ const Dashboard = () => {
         setSelectedProject(projectList[0].id);
       }
     };
-    fetchProjects();
-  }, []);
+    if (user) {
+      fetchProjects();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -161,9 +165,8 @@ const Dashboard = () => {
   } satisfies ChartConfig;
 
   return (
-   <>
-
-        <header className=" w-full bg-white ">
+    <>
+      <header className=" w-full bg-white ">
         <div className="flex justify-between px-6 md:p-4 max-w-7xl mx-auto">
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -195,138 +198,145 @@ const Dashboard = () => {
           </DropdownMenu>
 
           <div>
-          <Link href={"/d/FeedBank"}>💡Feedback</Link>
+            <Link href={"/d/FeedBank"}>💡Feedback</Link>
           </div>
         </div>
       </header>
-    <div className="p-6 gap-10 space-y-6 flex">
-      {/* Project Selector */}
-      <div className="w-2/12 mt-6">
-        <Select
-          onValueChange={setSelectedProject}
-          value={selectedProject || ""}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a Project" />
-          </SelectTrigger>
-          <SelectContent>
-            {projects.map((project) => (
-              <SelectItem key={project.id} value={project.id}>
-                {project.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="w-full">
-        <div className="flex flex-col lg:flex-row gap-4 mb-6">
-          <div className="flex-1 bg-white min-h-52 border border-black rounded-xl p-6 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl text-black">
-              Welcome to <br />
-              <strong>{selectedProjectName}</strong>
-            </h2>
-          </div>
-
-          <div className="flex-1 bg-white border min-h-52 border-black rounded-xl p-6 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl text-black">
-              Total Feedback <br />
-              <strong>{feedbacks.length}</strong>
-            </h2>
-          </div>
+      <div className="p-6 gap-10 space-y-6 flex">
+        {/* Project Selector */}
+        <div className="w-2/12 mt-6">
+          <Select
+            onValueChange={setSelectedProject}
+            value={selectedProject || ""}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a Project" />
+            </SelectTrigger>
+            <SelectContent>
+              {projects.map((project) => (
+                <SelectItem key={project.id} value={project.id}>
+                  {project.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex gap-10 mt-10">
-          <div className="min-h-[200px] w-full">
-            <h2 className="text-xl font-bold mb-4">Feedback Status Distribution</h2>
-            <ChartContainer config={chartConfig}>
-              <BarChart accessibilityLayer data={chartData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="status"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => value}
-                />
-                <Bar dataKey="count" fill="var(--color-desktop)" radius={4} />
-              </BarChart>
-            </ChartContainer>
+        <div className="w-full">
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            <div className="flex-1 bg-white min-h-52 border border-black rounded-xl p-6 animate-fade-in">
+              <h2 className="text-4xl md:text-5xl text-black">
+                Welcome to <br />
+                <strong>{selectedProjectName}</strong>
+              </h2>
+            </div>
+
+            <div className="flex-1 bg-white border min-h-52 border-black rounded-xl p-6 animate-fade-in">
+              <h2 className="text-4xl md:text-5xl text-black">
+                Total Feedback <br />
+                <strong>{feedbacks.length}</strong>
+              </h2>
+            </div>
           </div>
 
-          <div className="w-full">
-            <h2 className="text-xl font-bold mb-4">Top 5 Feedbacks by Votes</h2>
-            <p className="text-lg mb-6">Explore the most popular feedbacks based on votes.</p>
-            <ChartContainer
-              config={topChartConfig}
-              className="mx-auto aspect-square max-h-[300px]"
-            >
-              <PieChart>
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
-                />
-                <Pie
-                  data={topChartData}
-                  dataKey="votes"
-                  nameKey="title"
-                  innerRadius={60}
-                  strokeWidth={5}
-                  fill="#8884d8"
-                >
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                          >
-                            <tspan
+          <div className="flex gap-10 mt-10">
+            <div className="min-h-[200px] w-full">
+              <h2 className="text-xl font-bold mb-4">
+                Feedback Status Distribution
+              </h2>
+              <ChartContainer config={chartConfig}>
+                <BarChart accessibilityLayer data={chartData}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="status"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value) => value}
+                  />
+                  <Bar dataKey="count" fill="var(--color-desktop)" radius={4} />
+                </BarChart>
+              </ChartContainer>
+            </div>
+
+            <div className="w-full">
+              <h2 className="text-xl font-bold mb-4">
+                Top 5 Feedbacks by Votes
+              </h2>
+              <p className="text-lg mb-6">
+                Explore the most popular feedbacks based on votes.
+              </p>
+              <ChartContainer
+                config={topChartConfig}
+                className="mx-auto aspect-square max-h-[300px]"
+              >
+                <PieChart>
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel />}
+                  />
+                  <Pie
+                    data={topChartData}
+                    dataKey="votes"
+                    nameKey="title"
+                    innerRadius={60}
+                    strokeWidth={5}
+                    fill="#8884d8"
+                  >
+                    <Label
+                      content={({ viewBox }) => {
+                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                          return (
+                            <text
                               x={viewBox.cx}
                               y={viewBox.cy}
-                              className="fill-foreground text-3xl font-bold"
+                              textAnchor="middle"
+                              dominantBaseline="middle"
                             >
-                              {topFeedbacks
-                                .reduce(
-                                  (acc: any, curr: any) => acc + curr.votes,
-                                  0
-                                )
-                                .toLocaleString()}
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 24}
-                              className="fill-muted-foreground"
-                            >
-                              Total Votes
-                            </tspan>
-                          </text>
-                        );
-                      }
-                    }}
-                  />
-                </Pie>
-              </PieChart>
-            </ChartContainer>
+                              <tspan
+                                x={viewBox.cx}
+                                y={viewBox.cy}
+                                className="fill-foreground text-3xl font-bold"
+                              >
+                                {topFeedbacks
+                                  .reduce(
+                                    (acc: any, curr: any) => acc + curr.votes,
+                                    0
+                                  )
+                                  .toLocaleString()}
+                              </tspan>
+                              <tspan
+                                x={viewBox.cx}
+                                y={(viewBox.cy || 0) + 24}
+                                className="fill-muted-foreground"
+                              >
+                                Total Votes
+                              </tspan>
+                            </text>
+                          );
+                        }
+                      }}
+                    />
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+            </div>
+          </div>
+
+          {/* Kanban Board */}
+          <div className="w-full mt-10">
+            <h1 className="font-bold text-2xl">FeedBack Task</h1>
+            {feedbacks && (
+              <KanbanBoard
+                feedbacks={feedbacks}
+                projectId={selectedProject as string}
+                onUpdateStatus={handleUpdateStatus}
+              />
+            )}
           </div>
         </div>
-
-        {/* Kanban Board */}
-        <div className="w-full mt-10">
-          <h1 className="font-bold text-2xl">FeedBack Task</h1>
-          {feedbacks && (
-            <KanbanBoard
-              feedbacks={feedbacks}
-              onUpdateStatus={handleUpdateStatus}
-            />
-          )}
-        </div>
       </div>
-    </div>
-   </>
+    </>
   );
 };
 

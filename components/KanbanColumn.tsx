@@ -6,9 +6,10 @@ interface KanbanColumnProps {
   title: string;
   status: string;
   feedbacks: any;
+  projectId: string
 }
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, status, feedbacks }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, status, feedbacks, projectId }) => {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
   return (
@@ -18,7 +19,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, status, feedbacks })
      </div>
       <div className="space-y-4">
         {feedbacks.map((feedback: any) => (
-          <KanbanCard key={feedback.id} feedback={feedback} />
+          <KanbanCard key={feedback.id} projectId={projectId} feedback={feedback} />
         ))}
       </div>
     </div>
