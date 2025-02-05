@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <>
       {/* header */}
-      <header className="py-2 fixed top-0 z-20 w-full bg-white ">
+      <header className="py-5 fixed top-0 z-20 w-full bg-white ">
         <div className="flex justify-between px-6 md:p-4 container mx-auto">
           <Image
             src="/logo.png" // Replace with your image URL
@@ -39,7 +39,7 @@ export default function Home() {
         </div>
       </header>
       {/* the main page */}
-      <div className="flex h-screen justify-center items-center ">
+      <div className="flex h-screen justify-center px-4 items-center ">
         <div className="mx-auto container flex justify-center px-4 sm:px-6 md:mt-16 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">

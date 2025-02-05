@@ -28,7 +28,7 @@ const HowItWork = () => {
   };
 
   return (
-    <section className="py-5 w-full overflow-hidden ">
+    <section className="py-5 px-4 w-full overflow-hidden ">
       <div className=" px-4  sm:px-6  lg:px-8 mx-auto">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-center -mx-5">
