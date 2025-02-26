@@ -13,32 +13,29 @@ import { db } from "@/lib/firebase";
 
 interface KanbanCardProps {
   feedback: any;
-  projectId: string
+  projectId: string;
 }
 
 const KanbanCard: React.FC<KanbanCardProps> = ({ feedback, projectId }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: feedback.id,
   });
-  const [isDeletingFeedback, setIsDeletingFeedback] = useState("");
 
   const style = transform
     ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
     : undefined;
 
-    const handleDeleteFeedback = async (feedbackId: string) => {
-      setIsDeletingFeedback(feedbackId);
-      try {
-        await deleteDoc(
-          doc(db, "projects", projectId, "feedbacks", feedbackId)
-        );
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsDeletingFeedback("");
-      }
-    };
+  const handleDeleteFeedback = async (feedbackId: string) => {
+    console.log("clicked")
+    try {
+      const res = await deleteDoc(
+        doc(db, "projects", projectId, "feedbacks", feedbackId)
+      );
+      console.log("clicked")
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
@@ -52,8 +49,12 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ feedback, projectId }) => {
                 {" "}
                 <EllipsisVertical />
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={()=> handleDeleteFeedback(projectId)}>Delete</DropdownMenuItem>
+              <DropdownMenuContent className="z-20">
+                <DropdownMenuItem
+                  onClick={() => handleDeleteFeedback(feedback.id)}
+                >
+                  {"Delete"}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

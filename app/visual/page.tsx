@@ -324,7 +324,7 @@ const Dashboard = () => {
           </div>
 
           {/* Kanban Board */}
-          <div className="w-full mt-10">
+          <div className="w-full mt-10 mb-20">
             <h1 className="font-bold text-2xl">FeedBack Task</h1>
             {feedbacks && (
               <KanbanBoard

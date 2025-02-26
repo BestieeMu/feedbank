@@ -9,8 +9,6 @@ const KanbanBoard: React.FC<{ feedbacks: any; onUpdateStatus: (id: string, statu
     const { active, over } = event;
     if (!over) return;
 
-    console.log("Dropped");
-
     const itemToMove = feedbacks.find((item: any) => item.id === active.id);
     if (!itemToMove) return;
 

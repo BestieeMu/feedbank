@@ -4,19 +4,12 @@ import { useRouter } from "next/navigation";
 import {
   doc,
   deleteDoc,
-  updateDoc,
   collection,
   getDoc,
   onSnapshot,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Clipboard, ExternalLink, Trash } from "lucide-react";
 import withAuth from "@/lib/authGuard";
 import { Button } from "@/components/ui/button";
@@ -27,6 +20,7 @@ export interface Feedback {
   id: string;
   status: "new" | "inProgress" | "resolved";
   message: string;
+  commentCount: number
 }
 
 interface Project {
@@ -72,14 +66,21 @@ const ProjectFeedbackPage = ({
               "feedbacks"
             );
             const unsub = onSnapshot(feedbackRef, (querySnapshot) => {
-              const feedbackList = querySnapshot.docs.map(
-                (doc) =>
-                  ({
-                    id: doc.id,
-                    ...doc.data(),
-                  } as Feedback)
-              );
-              setFeedbacks(feedbackList);
+              const feedbackPromises = querySnapshot.docs.map(async (doc) => {
+                const commentsRef = collection(doc.ref, "comments");
+                const commentsSnap = await getDocs(commentsRef);
+                const commentCount = commentsSnap.size;
+                
+                return {
+                  id: doc.id,
+                  ...doc.data(),
+                  commentCount
+                } as Feedback;
+              });
+
+              Promise.all(feedbackPromises).then((feedbackList) => {
+                setFeedbacks(feedbackList);
+              });
             });
           }
         }
@@ -187,12 +188,9 @@ const ProjectFeedbackPage = ({
               </>
             )}
           </button>
-          <div className="w-full bg-black text-center p-6 mt-10 rounded-md">
-            <p className="text-white font-bold ">Upgrade to premium to use visual feedback</p>
-            <Button className="mt-4 p-2 bg-white font-semibold uppercase hover:bg-white text-black rounded-lg" >
-             upgrade now ⚡
+          <Button onClick={()=> router.push("/visual")} className="mt-4 py-3 w-full font-semibold uppercase rounded-lg" >
+             Use Visual⚡
             </Button>
-          </div>
         </div>
 
         <div className="w-full flex flex-col">
@@ -217,7 +215,7 @@ const ProjectFeedbackPage = ({
                   </p>
                   <div className="flex items-center mt-4 text-gray-500 text-sm">
                     <span>▲ {item.votes}</span>
-                    <span className="ml-4">💬 0</span>
+                    <span className="ml-4">💬 {item.commentCount}</span>
                   </div>
                 </div>
                 <div className="w-5/12 space-y-4">
