@@ -11,8 +11,10 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   useEffect(() => {
+    setMounted(true);
     const unsubscribe = auth.onAuthStateChanged((currentUser: any) => {
       if (currentUser) {
         setUser(currentUser);
@@ -71,7 +73,7 @@ export default function Home() {
           
           <div className="mt-6 sm:flex sm:justify-center">
             <div className="rounded-md shadow">
-              {user ? (
+              {!mounted ? null : user ? (
                 <Button
                   onClick={() => router.push("/dashboard")}
                   className="flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium text-white md:py-6 md:px-10 md:text-lg"

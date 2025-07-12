@@ -15,13 +15,14 @@ import React, { useEffect, useState } from "react";
 const Page = () => {
   const router = useRouter();
   const params = useParams();
+  let projectName = typeof params.projectName === 'string' ? params.projectName : Array.isArray(params.projectName) ? params.projectName[0] : '';
+  projectName = decodeURIComponent(projectName); // <-- decode URL param
+  const slug = params.slug;
   const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
   const [addingComment, setAddingComment] = useState<any>(false);
   const [feedback, setFeedback] = useState<any>(null);
   const [comments, setComments] = useState<any>([]);
   const [newComment, setNewComment] = useState("");
-  const projectName = params.projectName;
-  const slug = params.slug;
 
   useEffect(() => {
     if (!projectName) return;

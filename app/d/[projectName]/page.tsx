@@ -53,6 +53,7 @@ const ProjectDetails = ({
   const [isLoadingFeedbacks, setIsLoadingFeedbacks] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
   const [isPostingFeedback, setIsPostingFeedback] = useState(false);
   const [votedFeedbacks, setVotedFeedbacks] = useState<{
     [key: string]: boolean;
@@ -62,6 +63,7 @@ const ProjectDetails = ({
   }>({});
 
   useEffect(() => {
+    setMounted(true);
     const unsubscribe = auth.onAuthStateChanged((currentUser: any) => {
       if (currentUser) {
         setUser(currentUser);
@@ -74,7 +76,8 @@ const ProjectDetails = ({
   }, []);
   useEffect(() => {
     const fetchProject = async () => {
-      const projectName = (await params).projectName;
+      let projectName = (await params).projectName;
+      projectName = decodeURIComponent(projectName); // <-- decode URL param
       setIsLoadingFeedbacks(true);
       try {
         if (projectName) {
@@ -253,104 +256,106 @@ const ProjectDetails = ({
       </header>
       <div className="bg-gray-100 min-h-screen p-6">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-10 items-start">
-          {project ? (
-            <>
-              {/* Feedback Form */}
-              <div className="bg-white w-full md:w-5/12 p-6 rounded-lg shadow-lg mt-6">
-                <h2 className="text-xl font-bold mb-4">Post a Feedback</h2>
-                <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    placeholder="Short, descriptive title"
-                    value={newFeedback.title}
-                    onChange={(e) =>
-                      setNewFeedback({ ...newFeedback, title: e.target.value })
-                    }
-                    className="w-full border p-2 rounded-lg outline-none mb-3 text-gray-700"
-                  />
-                  <textarea
-                    placeholder="Description"
-                    value={newFeedback.description}
-                    onChange={(e) =>
-                      setNewFeedback({
-                        ...newFeedback,
-                        description: e.target.value,
-                      })
-                    }
-                    className="w-full border resize-none outline-none p-2 rounded-lg mb-3 text-gray-700"
-                  />
-                  <Button
-                    type="submit"
-                    className="w-full text-white font-semibold py-2 rounded-lg transition"
-                    disabled={isPostingFeedback}
-                  >
-                    {isPostingFeedback ? "Posting..." : "Submit Feedback"}
-                  </Button>
-                </form>
-              </div>
-
-              {/* Feedback List */}
-              <div className="mt-6 w-full">
-                <h2 className="text-xl font-bold mb-4">Feedbacks</h2>
-                {isLoadingFeedbacks ? (
-                  <p>Loading feedbacks...</p>
-                ) : feedbacks.length === 0 ? (
-                  <p>No feedbacks yet.</p>
-                ) : (
-                  feedbacks.map((feedback: any) => (
-                    <div
-                      key={feedback.id}
-                      className="bg-white p-4 rounded-lg flex shadow-md mb-4"
+          {!mounted ? null : (
+            project ? (
+              <>
+                {/* Feedback Form */}
+                <div className="bg-white w-full md:w-5/12 p-6 rounded-lg shadow-lg mt-6">
+                  <h2 className="text-xl font-bold mb-4">Post a Feedback</h2>
+                  <form onSubmit={handleSubmit}>
+                    <input
+                      type="text"
+                      placeholder="Short, descriptive title"
+                      value={newFeedback.title}
+                      onChange={(e) =>
+                        setNewFeedback({ ...newFeedback, title: e.target.value })
+                      }
+                      className="w-full border p-2 rounded-lg outline-none mb-3 text-gray-700"
+                    />
+                    <textarea
+                      placeholder="Description"
+                      value={newFeedback.description}
+                      onChange={(e) =>
+                        setNewFeedback({
+                          ...newFeedback,
+                          description: e.target.value,
+                        })
+                      }
+                      className="w-full border resize-none outline-none p-2 rounded-lg mb-3 text-gray-700"
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full text-white font-semibold py-2 rounded-lg transition"
+                      disabled={isPostingFeedback}
                     >
-                      <div className="flex w-full items-center space-x-4">
-                        <div className="pr-7">
-                          <div className="flex items-start gap-4">
-                            <Link
-                              href={`/d/${project.title}/p/${feedback.slug}`}
-                            >
-                              <h3 className="font-bold hover:underline ">
-                                {feedback.title}
-                              </h3>
-                            </Link>{" "}
-                            <p className="text-green-500 text-sm font-medium">
-                              {feedback.status}
+                      {isPostingFeedback ? "Posting..." : "Submit Feedback"}
+                    </Button>
+                  </form>
+                </div>
+
+                {/* Feedback List */}
+                <div className="mt-6 w-full">
+                  <h2 className="text-xl font-bold mb-4">Feedbacks</h2>
+                  {isLoadingFeedbacks ? (
+                    <p>Loading feedbacks...</p>
+                  ) : feedbacks.length === 0 ? (
+                    <p>No feedbacks yet.</p>
+                  ) : (
+                    feedbacks.map((feedback: any) => (
+                      <div
+                        key={feedback.id}
+                        className="bg-white p-4 rounded-lg flex shadow-md mb-4"
+                      >
+                        <div className="flex w-full items-center space-x-4">
+                          <div className="pr-7">
+                            <div className="flex items-start gap-4">
+                              <Link
+                                href={`/d/${project.title}/p/${feedback.slug}`}
+                              >
+                                <h3 className="font-bold hover:underline ">
+                                  {feedback.title}
+                                </h3>
+                              </Link>{" "}
+                              <p className="text-green-500 text-sm font-medium">
+                                {feedback.status}
+                              </p>
+                            </div>
+                            <p className="text-gray-600 text-balance">
+                              {feedback.description}
                             </p>
+                            {/* number of comments */}
+                            <span className="mt-6">
+                              💬 {feedback.commentCount}
+                            </span>
                           </div>
-                          <p className="text-gray-600 text-balance">
-                            {feedback.description}
-                          </p>
-                          {/* number of comments */}
-                          <span className="mt-6">
-                            💬 {feedback.commentCount}
-                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <button
+                            onClick={() =>
+                              handleVote(feedback.id, feedback.votes)
+                            }
+                            className={`px-3 py-1 rounded-lg ${
+                              feedback.voters.includes(user?.uid)
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200"
+                            }`}
+                            disabled={votingLoading[feedback.id]}
+                          >
+                            {votingLoading[feedback.id]
+                              ? "..."
+                              : `▲ ${feedback.votes}`}
+                          </button>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <button
-                          onClick={() =>
-                            handleVote(feedback.id, feedback.votes)
-                          }
-                          className={`px-3 py-1 rounded-lg ${
-                            feedback.voters.includes(user?.uid)
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200"
-                          }`}
-                          disabled={votingLoading[feedback.id]}
-                        >
-                          {votingLoading[feedback.id]
-                            ? "..."
-                            : `▲ ${feedback.votes}`}
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </>
-          ) : (
-            <p className="text-center text-gray-500">
-              Loading project details...
-            </p>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <p className="text-center text-gray-500">
+                Loading project details...
+              </p>
+            )
           )}
         </div>
       </div>
